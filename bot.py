@@ -1,15 +1,14 @@
-#----------------------------------- https://github.com/m4mallu/clonebot --------------------------------------------#
-import os
 
+import os
+import asyncio
 from pyrogram import Client
 from user import User
 
+# Load correct config
 if bool(os.environ.get("ENV", False)):
-    from sample_config import Config
-    from sample_config import LOGGER
+    from sample_config import Config, LOGGER
 else:
-    from config import Config
-    from config import LOGGER
+    from config import Config, LOGGER
 
 
 class Bot(Client):
@@ -19,25 +18,31 @@ class Bot(Client):
     def __init__(self):
         super().__init__(
             "bot_session",
-            api_hash=Config.API_HASH,
             api_id=Config.APP_ID,
+            api_hash=Config.API_HASH,
             bot_token=Config.TG_BOT_TOKEN,
-            sleep_threshold = 30,
-            plugins={
-                "root": "plugins"
-            }
+            sleep_threshold=30,
+            plugins={"root": "plugins"}
         )
         self.LOGGER = LOGGER
 
     async def start(self):
         await super().start()
-        usr_bot_me = await self.get_me()
+
+        me = await self.get_me()
         self.set_parse_mode("html")
-        self.LOGGER(__name__).info(
-            f"@{usr_bot_me.username}  started! "
-        )
+
+        self.LOGGER(__name__).info(f"@{me.username} started!")
+
+        # Start user session
         self.USER, self.USER_ID = await User().start()
 
     async def stop(self, *args):
         await super().stop()
         self.LOGGER(__name__).info("Bot stopped. Bye.")
+
+
+# 🔥 Render & Linux safe launcher
+if __name__ == "__main__":
+    bot = Bot()
+    bot.run()
