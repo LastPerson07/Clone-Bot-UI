@@ -6,16 +6,16 @@ if os.environ.get("ENV", False):
 else:
     from config import Config, LOGGER
 
+os.makedirs("sessions", exist_ok=True)
 
 class User(Client):
     def __init__(self):
         super().__init__(
-            "user_session",
+            "sessions/user",                   # 🔥 persistent
             api_id=Config.APP_ID,
             api_hash=Config.API_HASH,
             session_string=Config.TG_USER_SESSION,
-            workers=4,
-            no_updates=True    # 🔥 blocks channel crashes
+            workers=4
         )
         self.LOGGER = LOGGER
 
@@ -24,6 +24,7 @@ class User(Client):
 
         me = await self.get_me()
         self.set_parse_mode("HTML")
+
         self.LOGGER(__name__).info(f"@{me.username} user account started!")
 
         return self, me.id
