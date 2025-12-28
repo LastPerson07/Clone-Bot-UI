@@ -1,10 +1,8 @@
-
 import os
-import asyncio
 from pyrogram import Client
 from user import User
 
-# Load correct config
+# Load config
 if bool(os.environ.get("ENV", False)):
     from sample_config import Config, LOGGER
 else:
@@ -22,7 +20,8 @@ class Bot(Client):
             api_hash=Config.API_HASH,
             bot_token=Config.TG_BOT_TOKEN,
             sleep_threshold=30,
-            plugins={"root": "plugins"}
+            plugins={"root": "plugins"},
+            no_updates=True   # 🔥 prevents peer id crashes
         )
         self.LOGGER = LOGGER
 
@@ -30,7 +29,7 @@ class Bot(Client):
         await super().start()
 
         me = await self.get_me()
-        self.set_parse_mode("html")
+        self.set_parse_mode("HTML")  # 🔥 uppercase
 
         self.LOGGER(__name__).info(f"@{me.username} started!")
 
@@ -42,7 +41,6 @@ class Bot(Client):
         self.LOGGER(__name__).info("Bot stopped. Bye.")
 
 
-# 🔥 Render & Linux safe launcher
 if __name__ == "__main__":
     bot = Bot()
     bot.run()
