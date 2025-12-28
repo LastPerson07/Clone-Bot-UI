@@ -15,7 +15,7 @@ class User(Client):
             api_hash=Config.API_HASH,
             session_string=Config.TG_USER_SESSION,
             workers=4,
-            no_updates=True   # 🔥 prevents peer id crashes
+            no_updates=True    # 🔥 blocks channel crashes
         )
         self.LOGGER = LOGGER
 
@@ -23,8 +23,7 @@ class User(Client):
         await super().start()
 
         me = await self.get_me()
-        self.set_parse_mode("HTML")  # 🔥 uppercase
-
+        self.set_parse_mode("HTML")
         self.LOGGER(__name__).info(f"@{me.username} user account started!")
 
         return self, me.id
