@@ -15,13 +15,14 @@ class Bot(Client):
 
     def __init__(self):
         super().__init__(
-            "bot_session",
+            name="bot_session",                # avoid filesystem issues
             api_id=Config.APP_ID,
             api_hash=Config.API_HASH,
             bot_token=Config.TG_BOT_TOKEN,
             sleep_threshold=30,
             plugins={"root": "plugins"},
-            no_updates=True   # 🔥 prevents peer id crashes
+            no_updates=True,                   # 🔥 prevents peer id crashes
+            workdir="sessions"                 # 🔥 avoids Render path bugs
         )
         self.LOGGER = LOGGER
 
@@ -29,7 +30,7 @@ class Bot(Client):
         await super().start()
 
         me = await self.get_me()
-        self.set_parse_mode("HTML")  # 🔥 uppercase
+        self.set_parse_mode("HTML")            # must be uppercase
 
         self.LOGGER(__name__).info(f"@{me.username} started!")
 
@@ -42,5 +43,6 @@ class Bot(Client):
 
 
 if __name__ == "__main__":
+    os.makedirs("sessions", exist_ok=True)     # 🔥 Render safe
     bot = Bot()
-    bot.run()
+    bot.run(stop_signals=None)                 # 🔥 stop update thread
