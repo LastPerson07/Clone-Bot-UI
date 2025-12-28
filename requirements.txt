@@ -1,3 +1,4 @@
-pyrogram==1.2.5
+pyrogram==2.0.106
 tgcrypto
 pytz
+async-lru==2.0.4
