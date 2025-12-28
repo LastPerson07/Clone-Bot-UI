@@ -20,16 +20,18 @@ class Bot(Client):
             api_hash=Config.API_HASH,
             bot_token=Config.TG_BOT_TOKEN,
             sleep_threshold=30,
-            plugins={"root": "plugins"},
-            no_updates=True      # this is enough
+            plugins={"root": "plugins"}   # must allow updates
         )
         self.LOGGER = LOGGER
 
     async def start(self):
         await super().start()
+
         me = await self.get_me()
         self.set_parse_mode("HTML")
         self.LOGGER(__name__).info(f"@{me.username} started!")
+
+        # Start user session
         self.USER, self.USER_ID = await User().start()
 
     async def stop(self, *args):
@@ -40,4 +42,4 @@ class Bot(Client):
 if __name__ == "__main__":
     os.makedirs("sessions", exist_ok=True)
     bot = Bot()
-    bot.run()   # 🔥 correct for Pyrogram 2.0.106
+    bot.run()
